@@ -1,7 +1,7 @@
-import { greet } from "./utils/greet";
+import CreatePoll from "./components/CreatePoll";
 
 function App(): JSX.Element {
-  return <h1>{greet("World")}</h1>;
+  return <CreatePoll />;
 }
 
 export default App;
