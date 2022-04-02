@@ -1,83 +1,119 @@
-import { useState } from "react";
+import { createRef, RefObject, useEffect, useState } from "react";
 import Option from "./Option";
 import { OptionProps } from "../utils/interfaces";
 export default function OptionsController(): JSX.Element {
+  const inputRef: RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
+
   const intialOptions: OptionProps[] = [
     {
       onKeyPressFunction: onOptionKeyPress,
-      onChangeFunction: onOptionChange,
+      onButtonClickFunction: onButtonPress,
       active: true,
       id: 0,
       text: "",
     },
     {
       onKeyPressFunction: onOptionKeyPress,
-      onChangeFunction: onOptionChange,
+      onButtonClickFunction: onButtonPress,
       active: false,
       id: 1,
       text: "",
+      focusRef: inputRef,
     },
   ];
 
   const [options, setOptions] = useState<OptionProps[]>(intialOptions);
+  const [lastKeyPress, setLastKeyPress] = useState("");
 
-  function onOptionChange(optionValue: string, optionObject: OptionProps) {
+  function getNextId() {
+    const optionIds = options.map((o) => o.id);
+    const highestId = Math.max(...optionIds);
+    return highestId + 1;
+  }
+
+  function onOptionKeyPress(
+    event: React.KeyboardEvent,
+    optionObject: OptionProps
+  ) {
+    const keyPressed: string = event.key;
+    setLastKeyPress(keyPressed);
+    const inputText = (event.target as HTMLInputElement).value;
     const optionIndex = options.findIndex((o) => o.id === optionObject.id);
-    options[optionIndex].text = optionValue;
-    console.log(`Beginning of onChange func, length is: ${options.length}`);
-    const optionIsPenultimate: boolean = optionIndex === options.length - 2; // need a way to identify whether input is penultimate
-    if (optionValue.length > 0) {
-      if (optionIsPenultimate) {
-        console.log("A change in the penultimate option!");
-        // activate the input that's currently last
-        const newPenultimateObject: OptionProps = Object.assign(
-          options[optionIndex + 1],
-          { active: true }
-        );
-
-        // add a new disabled input to the end
-        const newUltimateOption: OptionProps = {
-          onKeyPressFunction: onOptionKeyPress,
-          onChangeFunction: onOptionChange,
-          active: false,
-          id: optionIndex + 2,
-          text: "",
-        };
-        setOptions((previousOptions) => [
-          ...previousOptions.slice(0, -1),
-          newPenultimateObject,
-          newUltimateOption,
-        ]);
-      }
+    options[optionIndex].text = inputText;
+    if (keyPressed === "Enter" && inputText.length > 0) {
+      const newPenultimateOption = Object.assign(options[options.length - 1], {
+        active: true,
+      });
+      const newLastOption: OptionProps = {
+        onKeyPressFunction: onOptionKeyPress,
+        onButtonClickFunction: onButtonPress,
+        active: false,
+        id: getNextId(),
+        text: "",
+        focusRef: inputRef,
+      };
+      setOptions((previousOptions) => [
+        ...previousOptions.slice(0, -1),
+        newPenultimateOption,
+        newLastOption,
+      ]);
     } else {
-      // remove last, disable penultimate
-      const newOptions = options.slice(0, -1);
-      newOptions[newOptions.length - 1].active = false;
+      const replacementObject = Object.assign(options[optionIndex], {
+        text: inputText,
+      });
+      const newOptions: OptionProps[] = [...options];
+      newOptions[optionIndex] = replacementObject;
       setOptions(newOptions);
     }
   }
 
-  function onOptionKeyPress(keyPressed: string, optionId: number) {
-    //console.log(keyPressed,optionId)
+  function focus() {
+    if (inputRef.current && lastKeyPress === "Enter") {
+      inputRef.current.focus();
+    }
   }
 
-  console.log(
-    `At rerender of OptionsController, options length is: ${options.length}`,
-    { options }
-  );
+  function determineFocusRef(i: number) {
+    if (options.length < 3) {
+      return i === options.length - 1 ? inputRef : undefined;
+    } else {
+      return i === options.length - 2 ? inputRef : undefined;
+    }
+  }
+
+  function onButtonPress(optionObject: OptionProps) {
+    const newOptions = [...options];
+    const optionIndex = options.findIndex((o) => o.id === optionObject.id);
+    const firstHalf: OptionProps[] = newOptions.slice(0, optionIndex);
+    const secondHalf: OptionProps[] = newOptions.slice(optionIndex + 1);
+    const adjustedSecondHalf: OptionProps[] = secondHalf.map((o) =>
+      Object.assign(o, { id: o.id })
+    );
+    setOptions(firstHalf.concat(adjustedSecondHalf));
+  }
+
+  useEffect(() => {
+    focus();
+  });
 
   return (
     <>
-      {options.map((o, i) => (
-        <Option
-          key={i}
-          onKeyPressFunction={onOptionKeyPress}
-          onChangeFunction={onOptionChange}
-          active={o.active}
-          id={o.id}
-          text={o.text}
-        />
-      ))}
+      <section>
+        {options.map((o, i) => (
+          <span key={o.id}>
+            <Option
+              onKeyPressFunction={onOptionKeyPress}
+              onButtonClickFunction={onButtonPress}
+              active={o.active}
+              id={o.id}
+              text={o.text}
+              hasButton={i === 0 ? false : true}
+              focusRef={determineFocusRef(i)}
+            />
+          </span>
+        ))}
+      </section>
+      <button>Open Poll!</button>
     </>
   );
 }

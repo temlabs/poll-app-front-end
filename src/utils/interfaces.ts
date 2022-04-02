@@ -1,7 +1,14 @@
+import React, { RefObject } from "react";
+
 export interface OptionProps {
-  onKeyPressFunction: (keyPressed: string, optionId: number) => void;
-  onChangeFunction: (inputValue: string, optionObject: OptionProps) => void;
+  onKeyPressFunction: (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    optionObject: OptionProps
+  ) => void;
+  onButtonClickFunction: (optionObject: OptionProps) => void;
   active: boolean;
   text: string;
   id: number;
+  focusRef?: RefObject<HTMLInputElement>;
+  hasButton?: boolean;
 }
