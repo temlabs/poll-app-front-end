@@ -1,6 +1,8 @@
 import { createRef, RefObject, useEffect, useState } from "react";
 import Option from "./Option";
-import { OptionProps } from "../utils/interfaces";
+import { OptionProps, pollUrlProps, PollProp } from "../utils/interfaces";
+//import '../styles/main-style.css';
+
 export default function OptionsController(): JSX.Element {
   const inputRef: RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
 
@@ -24,6 +26,8 @@ export default function OptionsController(): JSX.Element {
 
   const [options, setOptions] = useState<OptionProps[]>(intialOptions);
   const [lastKeyPress, setLastKeyPress] = useState("");
+  const [questionText, setQuestionText] = useState("");
+  const [pollUrls, setPollUrls] = useState<pollUrlProps>();
 
   function getNextId() {
     const optionIds = options.map((o) => o.id);
@@ -39,6 +43,7 @@ export default function OptionsController(): JSX.Element {
     setLastKeyPress(keyPressed);
     const inputText = (event.target as HTMLInputElement).value;
     const optionIndex = options.findIndex((o) => o.id === optionObject.id);
+
     options[optionIndex].text = inputText;
     if (keyPressed === "Enter" && inputText.length > 0) {
       const newPenultimateOption = Object.assign(options[options.length - 1], {
@@ -92,28 +97,111 @@ export default function OptionsController(): JSX.Element {
     setOptions(firstHalf.concat(adjustedSecondHalf));
   }
 
+  function onSubmitButtonClick(){
+      const optionsArray = options.filter(o => o.text.length > 0).map(o => o.text);
+      const requestBody = {
+          question: questionText,
+          options: optionsArray,
+          openTime: new Date().toISOString,
+          closeTime: new Date().toISOString,
+          password: 'pass'
+      }
+      postData('http://localhost:5000/poll',requestBody).then(data => {
+        console.log(data);
+        const urlObj: pollUrlProps = {
+            voteUrl: data["voteUrl"],
+            masterUrl: data["masterUrl"]
+        }
+        setPollUrls(urlObj);
+      });
+
+
+
+  }
+
+  function onQuestionChange(newText:string):void {
+      setQuestionText(newText);
+  }
+
+  async function postData(url: string, data={}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  }
+  
+    
+
+
   useEffect(() => {
     focus();
   });
 
-  return (
-    <>
-      <section>
-        {options.map((o, i) => (
-          <span key={o.id}>
-            <Option
-              onKeyPressFunction={onOptionKeyPress}
-              onButtonClickFunction={onButtonPress}
-              active={o.active}
-              id={o.id}
-              text={o.text}
-              hasButton={i === 0 ? false : true}
-              focusRef={determineFocusRef(i)}
-            />
-          </span>
-        ))}
-      </section>
-      <button>Open Poll!</button>
-    </>
-  );
+  if(!pollUrls){
+    return (
+        <>
+    
+          <section className="flex-container-column centre-children">
+            <div>
+                <input value={questionText} onChange={(e) => onQuestionChange(e.target.value)} className="question-input" placeholder="Type your question here!"></input>   
+            </div>          
+              <div className="flex-container-column">
+                    {options.map((o, i) => (
+                    <span key={o.id} className="option-span flex-container-row">
+                        <Option
+                        onKeyPressFunction={onOptionKeyPress}
+                        onButtonClickFunction={onButtonPress}
+                        active={o.active}
+                        id={o.id}
+                        text={o.text}
+                        hasButton={i === 0 ? false : true}
+                        focusRef={determineFocusRef(i)}
+                        placeHolder={`Option ${i+1}...`}
+                        />
+                    </span>
+                    ))}              
+              </div>
+                <button onClick={onSubmitButtonClick} className="button-confirm">Open Poll!</button>
+          </section>
+          
+        </>
+    );
+  }
+  else{
+      return(
+          <>
+            <section className="flex-container-column centre-children post-submit">
+                <div>
+                    <input value={questionText} className="question-input" style={{opacity:'1', color: 'rgb(0,0,0)'}} disabled={true} ></input>   
+                </div>
+                <p>
+                    The master URL is:
+                </p>
+                <p>
+                    {pollUrls.masterUrl}
+                </p>
+                <p>
+                    The voting URL is:
+                </p>
+                <p>
+                    {pollUrls.voteUrl}
+                </p>
+
+            </section>
+          </>
+
+      );
+  }
+
+
 }

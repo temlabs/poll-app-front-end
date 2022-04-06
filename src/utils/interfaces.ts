@@ -11,4 +11,21 @@ export interface OptionProps {
   id: number;
   focusRef?: RefObject<HTMLInputElement>;
   hasButton?: boolean;
+  placeHolder?: string;
+}
+
+export interface pollUrlProps {
+    voteUrl: string;
+    masterUrl: string;
+}
+
+export interface PollProp {
+    question: string;
+    options: string[];
+    openTime: string;
+    closeTime: string;
+    password: string;
+    id: number;
+    voteUrl: string;
+    masterUrl: string;
 }
