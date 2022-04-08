@@ -1,4 +1,4 @@
-export async function postData(url: string, data = {}) {
+export async function postData<DataType>(url: string, data = {}):Promise<DataType> {
     // Default options are marked with *
     const response = await fetch(url, {
       method: "POST",
@@ -16,7 +16,7 @@ export async function postData(url: string, data = {}) {
   }
 
 
-  export async function patchData(url: string, data = {}) {
+  export async function patchData<DataType>(url: string, data = {}):Promise<DataType> {
     // Default options are marked with *
     const response = await fetch(url, {
       method: "PATCH",
