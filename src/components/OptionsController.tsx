@@ -98,7 +98,7 @@ export default function OptionsController(): JSX.Element {
     setOptions(firstHalf.concat(adjustedSecondHalf));
   }
 
-  function onSubmitButtonClick() {
+  async function onSubmitButtonClick() {
     const optionsArray:OptionProps[] = options
       .filter((o) => o.text.length > 0)
     const optionsArrayData: OptionData[] = optionsArray.map(o => ({name: o.text, count: 0}));
@@ -109,14 +109,13 @@ export default function OptionsController(): JSX.Element {
       closeTime: new Date().toISOString,
       password: "pass",
     };
-    postData("http://localhost:5000/poll", requestBody).then((data) => {
-      console.log(data);
-      const urlObj: pollUrlProps = {
-        voteUrl: data["voteUrl"],
-        masterUrl: data["masterUrl"],
-      };
-      setPollUrls(urlObj);
-    });
+    const pollUrlData: pollUrlProps = await postData("http://localhost:5000/poll", requestBody);
+    const urlObj: pollUrlProps = {
+      voteUrl: pollUrlData.voteUrl,
+      masterUrl: pollUrlData.masterUrl,
+    };
+    setPollUrls(urlObj);
+  
   }
 
   function onQuestionChange(newText: string): void {
