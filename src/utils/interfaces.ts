@@ -15,17 +15,22 @@ export interface OptionProps {
 }
 
 export interface pollUrlProps {
-    voteUrl: string;
-    masterUrl: string;
+  voteUrl: string;
+  masterUrl: string;
 }
 
 export interface PollProp {
-    question: string;
-    options: string[];
-    openTime: string;
-    closeTime: string;
-    password: string;
-    id: number;
-    voteUrl: string;
-    masterUrl: string;
+  question: string;
+  options: OptionData[];
+  openTime: string;
+  closeTime: string;
+  password: string;
+  id: number;
+  voteUrl: string;
+  masterUrl: string;
+}
+
+export interface OptionData {
+  name: string;
+  count: number;
 }
