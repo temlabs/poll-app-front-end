@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {PollProp,OptionData} from '../utils/interfaces';
 import { patchData } from '../utils/requests';
 
@@ -6,20 +6,19 @@ import { patchData } from '../utils/requests';
 export default function VoteInPoll():JSX.Element {
     const [pollData, setPollData] = useState<PollProp>();
     const [lastOptionChanged,setLastOptionChanged] = useState<number>();
-    const pollPathRegexArray: RegExpMatchArray[] = Array.from(window.location.href.matchAll(RegExp('polls/[0-9]+','g')));
-    const pollDataPath:RegExpMatchArray = pollPathRegexArray[0];
+    const windowHref:string = window.location.href;
 
-    if(!pollData){
+
+    useEffect(() => {
+        const pollPathRegexArray: RegExpMatchArray[] = Array.from(windowHref.matchAll(RegExp('polls/[0-9]+','g')));
+        const pollDataPath:RegExpMatchArray = pollPathRegexArray[0];
         fetch(`http://localhost:5000/${pollDataPath}`).then(res => res.json()).then(data => {
              data as PollProp;
-
                 setPollData(data);
-
             }
         );
-    }
+    },[windowHref])
 
-    
 
     function onVoteButtonClick(index: number){
         if(pollData){
