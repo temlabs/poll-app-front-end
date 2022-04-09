@@ -192,6 +192,9 @@ export default function OptionsController(): JSX.Element {
               >
                 Copy
               </button>
+              <a href={pollUrls.masterUrl} target="_blank" rel="noopener noreferrer">
+                Go!
+              </a>              
             </span>
 
             <p className="poll-label">The voting URL is:</p>
@@ -203,6 +206,9 @@ export default function OptionsController(): JSX.Element {
               >
                 Copy
               </button>
+              <a href={pollUrls.voteUrl} target="_blank" rel="noopener noreferrer">
+                Go!
+              </a>
             </span>
           </div>
         </section>
