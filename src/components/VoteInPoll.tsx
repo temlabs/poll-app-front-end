@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PollProp, OptionData } from "../utils/interfaces";
 import { patchData } from "../utils/requests";
-import {apiBaseUrl} from "../utils/global_vars";
+import { apiBaseUrl } from "../utils/global_vars";
 
 export default function VoteInPoll(): JSX.Element {
   const [pollData, setPollData] = useState<PollProp>();

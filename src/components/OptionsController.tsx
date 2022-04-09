@@ -2,7 +2,7 @@ import { createRef, RefObject, useEffect, useState } from "react";
 import Option from "./Option";
 import { postData } from "../utils/requests";
 import { OptionProps, pollUrlProps, OptionData } from "../utils/interfaces";
-import {apiBaseUrl} from "../utils/global_vars";
+import { apiBaseUrl } from "../utils/global_vars";
 //import '../styles/main-style.css';
 
 export default function OptionsController(): JSX.Element {
