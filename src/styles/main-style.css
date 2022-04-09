@@ -79,7 +79,6 @@ input:disabled {
   width: 550px;
 }
 
-
 .poll-info {
   background-color: azure;
   border-radius: 10px;
@@ -117,19 +116,23 @@ input:disabled {
   border-radius: 50px;
   border-color: green;
   border-width: 3px;
-  outline:rgb(59, 133, 59);
+  outline: rgb(59, 133, 59);
   cursor: pointer;
-
 }
 
 .vote-question {
   text-align: center;
 }
 
-
 .green-background {
   background-color: #54be4f;
   opacity: 0.9;
-  background: repeating-linear-gradient( -45deg, #088a0a, #088a0a 2px, #54be4f 2px, #54be4f 10px );
-  color:rgb(255, 255, 255);
+  background: repeating-linear-gradient(
+    -45deg,
+    #088a0a,
+    #088a0a 2px,
+    #54be4f 2px,
+    #54be4f 10px
+  );
+  color: rgb(255, 255, 255);
 }
