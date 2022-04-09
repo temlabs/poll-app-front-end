@@ -136,3 +136,35 @@ input:disabled {
   );
   color: rgb(255, 255, 255);
 }
+
+body {
+  margin:0;
+}
+
+header {
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 15px;
+  font-size: 20px;
+  padding: 10px;
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,109,1) 32%, rgba(0,212,255,1) 100%); 
+
+}
+
+header > h2 {
+  width:600px;
+  background: -webkit-linear-gradient(0deg, rgba(2,0,36,1) 0%, rgb(83, 6, 76) 32%, rgb(2, 92, 110) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  height: inherit;
+}
+
+
+
+
+
+
+
+
+
