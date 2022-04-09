@@ -115,7 +115,7 @@ export default function OptionsController(): JSX.Element {
       password: "pass",
     };
     const pollUrlData: pollUrlProps = await postData(
-      `${apiBaseUrl}/poll`,
+      `${apiBaseUrl}poll`,
       requestBody
     );
     const urlObj: pollUrlProps = {

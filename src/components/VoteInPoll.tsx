@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PollProp, OptionData } from "../utils/interfaces";
 import { patchData } from "../utils/requests";
+import {apiBaseUrl} from "../utils/global_vars";
 
 export default function VoteInPoll(): JSX.Element {
   const [pollData, setPollData] = useState<PollProp>();
@@ -12,7 +13,7 @@ export default function VoteInPoll(): JSX.Element {
       windowHref.matchAll(RegExp("polls/[0-9]+", "g"))
     );
     const pollDataPath: RegExpMatchArray = pollPathRegexArray[0];
-    fetch(`http://localhost:5000/${pollDataPath}`)
+    fetch(`${apiBaseUrl}${pollDataPath.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         data as PollProp;
@@ -33,7 +34,7 @@ export default function VoteInPoll(): JSX.Element {
 
       setPollData(newPollData);
       setLastOptionChanged(index);
-      patchData(`http://localhost:5000/polls/${pollData.id}`, pollData);
+      patchData(`${apiBaseUrl}polls/${pollData.id}`, pollData);
     }
   }
 
