@@ -2,6 +2,7 @@ import { createRef, RefObject, useEffect, useState } from "react";
 import Option from "./Option";
 import { postData } from "../utils/requests";
 import { OptionProps, pollUrlProps, OptionData } from "../utils/interfaces";
+import {apiBaseUrl} from "../utils/global_vars";
 //import '../styles/main-style.css';
 
 export default function OptionsController(): JSX.Element {
@@ -10,14 +11,14 @@ export default function OptionsController(): JSX.Element {
   const intialOptions: OptionProps[] = [
     {
       onKeyPressFunction: onOptionKeyPress,
-      onButtonClickFunction: onButtonPress,
+      onButtonClickFunction: onOptionButtonClick,
       active: true,
       id: 0,
       text: "",
     },
     {
       onKeyPressFunction: onOptionKeyPress,
-      onButtonClickFunction: onButtonPress,
+      onButtonClickFunction: onOptionButtonClick,
       active: false,
       id: 1,
       text: "",
@@ -52,7 +53,7 @@ export default function OptionsController(): JSX.Element {
       });
       const newLastOption: OptionProps = {
         onKeyPressFunction: onOptionKeyPress,
-        onButtonClickFunction: onButtonPress,
+        onButtonClickFunction: onOptionButtonClick,
         active: false,
         id: getNextId(),
         text: "",
@@ -87,7 +88,7 @@ export default function OptionsController(): JSX.Element {
     }
   }
 
-  function onButtonPress(optionObject: OptionProps) {
+  function onOptionButtonClick(optionObject: OptionProps) {
     const newOptions = [...options];
     const optionIndex = options.findIndex((o) => o.id === optionObject.id);
     const firstHalf: OptionProps[] = newOptions.slice(0, optionIndex);
@@ -99,9 +100,13 @@ export default function OptionsController(): JSX.Element {
   }
 
   async function onSubmitButtonClick() {
-    const optionsArray:OptionProps[] = options
-      .filter((o) => o.text.length > 0)
-    const optionsArrayData: OptionData[] = optionsArray.map(o => ({name: o.text, count: 0}));
+    const optionsArray: OptionProps[] = options.filter(
+      (o) => o.text.length > 0
+    );
+    const optionsArrayData: OptionData[] = optionsArray.map((o) => ({
+      name: o.text,
+      count: 0,
+    }));
     const requestBody = {
       question: questionText,
       options: optionsArrayData,
@@ -109,25 +114,25 @@ export default function OptionsController(): JSX.Element {
       closeTime: new Date().toISOString,
       password: "pass",
     };
-    const pollUrlData: pollUrlProps = await postData("http://localhost:5000/poll", requestBody);
+    const pollUrlData: pollUrlProps = await postData(
+      `${apiBaseUrl}poll`,
+      requestBody
+    );
     const urlObj: pollUrlProps = {
       voteUrl: pollUrlData.voteUrl,
       masterUrl: pollUrlData.masterUrl,
     };
     setPollUrls(urlObj);
-  
   }
 
   function onQuestionChange(newText: string): void {
     setQuestionText(newText);
   }
 
-
-
   useEffect(() => {
     focus();
   });
-  
+
   if (!pollUrls) {
     return (
       <>
@@ -145,7 +150,7 @@ export default function OptionsController(): JSX.Element {
               <span key={o.id} className="option-span flex-container-row">
                 <Option
                   onKeyPressFunction={onOptionKeyPress}
-                  onButtonClickFunction={onButtonPress}
+                  onButtonClickFunction={onOptionButtonClick}
                   active={o.active}
                   id={o.id}
                   text={o.text}
@@ -170,7 +175,7 @@ export default function OptionsController(): JSX.Element {
             <input
               value={questionText}
               className="question-input"
-              style={{ opacity: "1", color: "rgb(0,0,0)", textAlign:"center" }}
+              style={{ opacity: "1", color: "rgb(0,0,0)", textAlign: "center" }}
               disabled={true}
             ></input>
           </div>
@@ -179,17 +184,27 @@ export default function OptionsController(): JSX.Element {
             <p className="poll-label">The master URL is:</p>
             <span className="flex-container-row">
               <p className="poll-link">{pollUrls.masterUrl}</p>
-              <button onClick={() =>  navigator.clipboard.writeText(pollUrls.masterUrl)} className="copy-button">Copy</button>
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(pollUrls.masterUrl)
+                }
+                className="copy-button"
+              >
+                Copy
+              </button>
             </span>
-            
+
             <p className="poll-label">The voting URL is:</p>
             <span className="flex-container-row">
               <p className="poll-link">{pollUrls.voteUrl}</p>
-              <button onClick={() =>  navigator.clipboard.writeText(pollUrls.voteUrl)} className="copy-button">Copy</button>
+              <button
+                onClick={() => navigator.clipboard.writeText(pollUrls.voteUrl)}
+                className="copy-button"
+              >
+                Copy
+              </button>
             </span>
-                        
           </div>
-
         </section>
       </>
     );
