@@ -16,6 +16,8 @@ body {
   background-color: rgb(255, 255, 255);
   margin: 0;
   margin-top: 20px;
+  width: 100%;
+  overflow-x: -moz-hidden-unscrollable;
 }
 
 * {
@@ -56,6 +58,7 @@ input {
   height: var(--cancel-button-diameter);
   background-image: url("/src/icons/cancel.png");
   background-size: var(--cancel-button-diameter);
+  background-repeat: no-repeat;
   border: none;
   outline: none;
   border-radius: calc(var(--cancel-button-diameter) / 2);
