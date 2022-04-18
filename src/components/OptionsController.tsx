@@ -144,7 +144,9 @@ export default function OptionsController(): JSX.Element {
               className="question-input"
               placeholder="Type your question here!"
             ></input>
+            <p className="instruction-label">Press enter to add an option</p>
           </div>
+
           <div className="flex-container-column">
             {options.map((o, i) => (
               <span key={o.id} className="option-span flex-container-row">

@@ -11,11 +11,11 @@ function App(): JSX.Element {
 
   return (
     <>
-      <header className="flex-container-column centre-children">
+      {/* <header className="flex-container-column centre-children">
         <h2>
           We can't make everything perfect, but we can make up our minds :)
         </h2>
-      </header>
+      </header> */}
       <section>{mainContent}</section>
     </>
   );
