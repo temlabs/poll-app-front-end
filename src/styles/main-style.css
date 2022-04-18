@@ -167,7 +167,7 @@ input:disabled {
   color: rgb(255, 255, 255);
 }
 
-img{
+img {
   height: clamp(1em, 100px, 5em);
   margin: 1em;
 }
