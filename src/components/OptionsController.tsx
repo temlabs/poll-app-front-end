@@ -7,6 +7,8 @@ import { apiBaseUrl } from "../utils/global_vars";
 
 export default function OptionsController(): JSX.Element {
   const inputRef: RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
+  const firstInputRef: RefObject<HTMLInputElement> =
+    createRef<HTMLInputElement>();
 
   const intialOptions: OptionProps[] = [
     {
@@ -15,6 +17,7 @@ export default function OptionsController(): JSX.Element {
       active: true,
       id: 0,
       text: "",
+      focusRef: firstInputRef,
     },
     {
       onKeyPressFunction: onOptionKeyPress,
@@ -35,6 +38,14 @@ export default function OptionsController(): JSX.Element {
     const optionIds = options.map((o) => o.id);
     const highestId = Math.max(...optionIds);
     return highestId + 1;
+  }
+
+  function focusOnFirstOption(event: React.KeyboardEvent): void {
+    const keyPressed: string = event.key;
+    console.log(firstInputRef.current);
+    if (keyPressed === "Enter" && firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
   }
 
   function onOptionKeyPress(
@@ -81,9 +92,12 @@ export default function OptionsController(): JSX.Element {
   }
 
   function determineFocusRef(i: number) {
-    if (options.length < 3) {
+    if (i === 0) {
+      return firstInputRef;
+    }
+    if (options.length === 2) {
       return i === options.length - 1 ? inputRef : undefined;
-    } else {
+    } else if (options.length > 2) {
       return i === options.length - 2 ? inputRef : undefined;
     }
   }
@@ -143,6 +157,7 @@ export default function OptionsController(): JSX.Element {
               onChange={(e) => onQuestionChange(e.target.value)}
               className="question-input"
               placeholder="Type your question here!"
+              onKeyUp={(e) => focusOnFirstOption(e)}
             ></input>
             <p className="instruction-label">Press enter to add an option</p>
           </div>
