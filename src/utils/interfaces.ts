@@ -24,13 +24,13 @@ export interface PollProp {
   options: OptionData[];
   openTime: string;
   closeTime: string;
-  password: string;
-  id: number;
+  id: string;
   voteUrl: string;
   masterUrl: string;
 }
 
 export interface OptionData {
-  name: string;
-  count: number;
+  option: string;
+  votes: number;
+  optionNumber: number;
 }

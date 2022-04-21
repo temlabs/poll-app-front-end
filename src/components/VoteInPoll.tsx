@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PollProp, OptionData } from "../utils/interfaces";
+import { PollProp } from "../utils/interfaces";
 import { patchData } from "../utils/requests";
 import { apiBaseUrl } from "../utils/global_vars";
 
@@ -10,10 +10,11 @@ export default function VoteInPoll(): JSX.Element {
 
   useEffect(() => {
     const pollPathRegexArray: RegExpMatchArray[] = Array.from(
-      windowHref.matchAll(RegExp("polls/[0-9]+", "g"))
+      windowHref.matchAll(RegExp("[^#]*$", "g"))
     );
-    const pollDataPath: RegExpMatchArray = pollPathRegexArray[0];
-    fetch(`${apiBaseUrl}${pollDataPath.toString()}`)
+    const pollId: RegExpMatchArray = pollPathRegexArray[0];
+    console.log(`${apiBaseUrl}polls/${pollId.toString()}`);
+    fetch(`${apiBaseUrl}polls/${pollId.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         data as PollProp;
@@ -23,18 +24,31 @@ export default function VoteInPoll(): JSX.Element {
 
   function onVoteButtonClick(index: number) {
     if (pollData) {
-      const newOptionData: OptionData = pollData?.options[index];
-      const currentCount: number = newOptionData.count;
-      newOptionData.count = currentCount + 1;
-      const newPollData: PollProp = Object.assign({}, pollData);
-      newPollData.options[index] = newOptionData;
-      if (lastOptionChanged !== undefined) {
-        newPollData.options[lastOptionChanged].count--;
+      // avoid sending null requests
+      if (index === lastOptionChanged) {
+        return;
       }
 
-      setPollData(newPollData);
+      const voteRequestToIncrement = {
+        optionNumber: pollData.options[index].optionNumber,
+        option: pollData.options[index].option,
+        changeVoteBy: 1,
+      };
+
+      const voteRequests = [voteRequestToIncrement];
+
+      let voteRequestToDecrement;
+      if (lastOptionChanged !== undefined) {
+        voteRequestToDecrement = {
+          optionNumber: pollData.options[lastOptionChanged].optionNumber,
+          option: pollData.options[lastOptionChanged].option,
+          changeVoteBy: -1,
+        };
+        voteRequests.push(voteRequestToDecrement);
+      }
+      const requestBody = { voteModifications: voteRequests };
       setLastOptionChanged(index);
-      patchData(`${apiBaseUrl}polls/${pollData.id}`, pollData);
+      patchData(`${apiBaseUrl}polls/${pollData.id}`, requestBody);
     }
   }
 
@@ -45,7 +59,7 @@ export default function VoteInPoll(): JSX.Element {
         {pollData?.options.map((o, i) => {
           return (
             <span className="flex-container-row" key={i}>
-              <p className="vote-option">{o.name}</p>
+              <p className="vote-option">{o.option}</p>
               <button
                 onClick={() => onVoteButtonClick(i)}
                 className={
