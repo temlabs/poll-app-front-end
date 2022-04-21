@@ -5,7 +5,7 @@ import logo from "./images/p-poll-head.png";
 
 function App(): JSX.Element {
   let mainContent: JSX.Element;
-  if (window.location.href.match("#/polls/*")) {
+  if (window.location.href.match("polls/#/*")) {
     mainContent = <VoteInPoll />;
   } else {
     mainContent = <CreatePoll />;

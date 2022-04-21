@@ -1,7 +1,12 @@
 import { createRef, RefObject, useEffect, useState } from "react";
 import Option from "./Option";
 import { postData } from "../utils/requests";
-import { OptionProps, pollUrlProps, OptionData } from "../utils/interfaces";
+import {
+  OptionProps,
+  pollUrlProps,
+  OptionData,
+  PollProp,
+} from "../utils/interfaces";
 import { apiBaseUrl } from "../utils/global_vars";
 //import '../styles/main-style.css';
 
@@ -117,24 +122,23 @@ export default function OptionsController(): JSX.Element {
     const optionsArray: OptionProps[] = options.filter(
       (o) => o.text.length > 0
     );
-    const optionsArrayData: OptionData[] = optionsArray.map((o) => ({
-      name: o.text,
-      count: 0,
+    const optionsArrayData: OptionData[] = optionsArray.map((o, i) => ({
+      option: o.text,
+      votes: 0,
+      optionNumber: i,
     }));
     const requestBody = {
       question: questionText,
       options: optionsArrayData,
-      openTime: new Date().toISOString,
-      closeTime: new Date().toISOString,
-      password: "pass",
+      openTime: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
-    const pollUrlData: pollUrlProps = await postData(
+    const createdPoll: PollProp = await postData(
       `${apiBaseUrl}poll`,
       requestBody
     );
     const urlObj: pollUrlProps = {
-      voteUrl: pollUrlData.voteUrl,
-      masterUrl: pollUrlData.masterUrl,
+      voteUrl: createdPoll.voteUrl,
+      masterUrl: createdPoll.masterUrl,
     };
     setPollUrls(urlObj);
   }
@@ -198,7 +202,7 @@ export default function OptionsController(): JSX.Element {
           </div>
           <div className="poll-info flex-container-column">
             <p className="poll-label">Your poll is now live!</p>
-            <p className="poll-label">The master URL is:</p>
+            {/* <p className="poll-label">The master URL is:</p>
             <span className="flex-container-row">
               <p className="poll-link">{pollUrls.masterUrl}</p>
               <button
@@ -216,7 +220,7 @@ export default function OptionsController(): JSX.Element {
               >
                 Go!
               </a>
-            </span>
+            </span> */}
 
             <p className="poll-label">The voting URL is:</p>
             <span className="flex-container-row">
