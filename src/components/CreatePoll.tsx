@@ -9,6 +9,7 @@ import {
 import { apiBaseUrl } from "../utils/global_vars";
 import PollCreated from "./PollCreated";
 import PollConfig from "./PollConfig";
+import LoadingPoll from "./LoadingPoll";
 
 export default function OptionsController(): JSX.Element {
   const inputRef: RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
@@ -38,6 +39,7 @@ export default function OptionsController(): JSX.Element {
   const [questionText, setQuestionText] = useState("");
   const [pollUrls, setPollUrls] = useState<pollUrlProps>();
   const [lastKeyPress, setLastKeyPress] = useState("");
+  const [loading, setLoadingStatus] = useState(false);
 
   function deleteOption(optionObject: OptionProps) {
     const newOptions = [...options];
@@ -106,6 +108,7 @@ export default function OptionsController(): JSX.Element {
   }
 
   async function submitPoll() {
+    setLoadingStatus(true);
     const optionsArray: OptionProps[] = options.filter(
       (o) => o.text.length > 0
     );
@@ -123,6 +126,7 @@ export default function OptionsController(): JSX.Element {
       `${apiBaseUrl}poll`,
       requestBody
     );
+    setLoadingStatus(false);
     const urlObj: pollUrlProps = {
       voteUrl: createdPoll.voteUrl,
       masterUrl: createdPoll.masterUrl,
@@ -133,22 +137,20 @@ export default function OptionsController(): JSX.Element {
   if (!pollUrls) {
     return (
       <>
-        <PollConfig
-          submitPoll={submitPoll}
-          handleQuestionInputChange={handleQuestionInputChange}
-          handleOptionInputKeyPress={handleOptionInputKeyPress}
-          deleteOption={deleteOption}
-          options={options}
-          questionText={questionText}
-          lastKeyPress={lastKeyPress}
-        />
+        {(!loading && (
+          <PollConfig
+            submitPoll={submitPoll}
+            handleQuestionInputChange={handleQuestionInputChange}
+            handleOptionInputKeyPress={handleOptionInputKeyPress}
+            deleteOption={deleteOption}
+            options={options}
+            questionText={questionText}
+            lastKeyPress={lastKeyPress}
+          />
+        )) || <LoadingPoll />}
       </>
     );
   } else {
-    return (
-      <>
-        <PollCreated questionText={questionText} pollUrls={pollUrls} />
-      </>
-    );
+    return <PollCreated questionText={questionText} pollUrls={pollUrls} />;
   }
 }
