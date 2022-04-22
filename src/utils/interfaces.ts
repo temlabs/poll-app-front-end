@@ -5,7 +5,7 @@ export interface OptionProps {
     event: React.KeyboardEvent<HTMLInputElement>,
     optionObject: OptionProps
   ) => void;
-  onButtonClickFunction: (optionObject: OptionProps) => void;
+  onDeleteButtonClickFunction: (optionObject: OptionProps) => void;
   active: boolean;
   text: string;
   id: number;
@@ -33,4 +33,17 @@ export interface OptionData {
   option: string;
   votes: number;
   optionNumber: number;
+}
+
+export interface PollSetupProps {
+  submitPoll: () => void;
+  handleQuestionInputChange: (newText: string) => void;
+  handleOptionInputKeyPress: (
+    event: React.KeyboardEvent,
+    optionObject: OptionProps
+  ) => void;
+  deleteOption: (optionObject: OptionProps) => void;
+  options: OptionProps[];
+  questionText: string;
+  lastKeyPress: string;
 }
