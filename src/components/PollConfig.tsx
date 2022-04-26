@@ -26,7 +26,6 @@ export default function PollSetup(props: PollSetupProps): JSX.Element {
 
   function focusOnFirstOption(event: React.KeyboardEvent): void {
     const keyPressed: string = event.key;
-    console.log(firstInputRef.current);
     if (keyPressed === "Enter" && firstInputRef.current) {
       firstInputRef.current.focus();
     }

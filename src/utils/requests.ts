@@ -1,6 +1,7 @@
 export async function postData<DataType>(
   url: string,
-  data = {}
+  data = {},
+  signal?: AbortSignal,
 ): Promise<DataType> {
   // Default options are marked with *
   const response = await fetch(url, {
@@ -14,7 +15,8 @@ export async function postData<DataType>(
     redirect: "follow",
     referrerPolicy: "no-referrer",
     body: JSON.stringify(data),
-  });
+    signal
+  })
   return response.json();
 }
 

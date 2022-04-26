@@ -16,7 +16,7 @@ export default function OptionsController(): JSX.Element {
   const firstInputRef: RefObject<HTMLInputElement> =
     createRef<HTMLInputElement>();
 
-  const intialOptions: OptionProps[] = [
+  const initialOptions: OptionProps[] = [
     {
       onKeyPressFunction: handleOptionInputKeyPress,
       onDeleteButtonClickFunction: deleteOption,
@@ -35,11 +35,41 @@ export default function OptionsController(): JSX.Element {
     },
   ];
 
-  const [options, setOptions] = useState<OptionProps[]>(intialOptions);
+  // let startingQuestion = "";
+  // let startingLoadingStatus;
+
+
+
+  // if(window.history.state){
+  //   startingQuestion = window.history.state[0];
+  //   console.log(startingQuestion);
+  //   //setOptions(window.history.state[1]);
+  //   startingLoadingStatus = false;
+  // }
+
+
+
+  const [options, setOptions] = useState<OptionProps[]>(initialOptions);
   const [questionText, setQuestionText] = useState("");
   const [pollUrls, setPollUrls] = useState<pollUrlProps>();
   const [lastKeyPress, setLastKeyPress] = useState("");
   const [loading, setLoadingStatus] = useState(false);
+  const [pageState, setPageState] = useState();
+
+
+
+  const abortController = new AbortController();
+  const signal = abortController.signal;
+
+  window.addEventListener('popstate',(ev)=> {
+    if(window.history.state){
+      abortController.abort();
+      setOptions(window.history.state[1] as OptionProps[]);
+      setLoadingStatus(window.history.state[2]);
+      
+      setQuestionText(window.history.state[0]);
+    }
+  })
 
   function deleteOption(optionObject: OptionProps) {
     const newOptions = [...options];
@@ -108,7 +138,10 @@ export default function OptionsController(): JSX.Element {
   }
 
   async function submitPoll() {
+    window.history.pushState([questionText, JSON.parse(JSON.stringify(options)), loading],'','http://localhost:3000/');
     setLoadingStatus(true);
+    
+    
     const optionsArray: OptionProps[] = options.filter(
       (o) => o.text.length > 0
     );
@@ -122,16 +155,25 @@ export default function OptionsController(): JSX.Element {
       options: optionsArrayData,
       openTime: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
-    const createdPoll: PollProp = await postData(
+    const createdPoll = await postData(
       `${apiBaseUrl}poll`,
-      requestBody
-    );
-    setLoadingStatus(false);
-    const urlObj: pollUrlProps = {
-      voteUrl: createdPoll.voteUrl,
-      masterUrl: createdPoll.masterUrl,
-    };
-    setPollUrls(urlObj);
+      requestBody,
+      signal
+    ).catch(e => console.log(e))
+
+    if(createdPoll){
+      createdPoll as PollProp;
+      setLoadingStatus(false);
+      const urlObj: pollUrlProps = {
+        voteUrl: (createdPoll as PollProp).voteUrl,
+        masterUrl: (createdPoll as PollProp).masterUrl,
+      };
+      
+      setPollUrls(urlObj);
+
+    }
+
+
   }
 
   if (!pollUrls) {
