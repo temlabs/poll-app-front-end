@@ -16,7 +16,7 @@ export default function Option(props: OptionProps): JSX.Element {
         <button
           className="input-button"
           disabled={!props.active}
-          onClick={() => props.onButtonClickFunction(props)}
+          onClick={() => props.onDeleteButtonClickFunction(props)}
         ></button>
       )}
     </>

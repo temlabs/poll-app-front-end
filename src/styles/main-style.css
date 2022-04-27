@@ -4,6 +4,8 @@
   --font-size-label: 2vmin;
   --option-span-height: max(5vh, 45px);
   --cancel-button-diameter: calc(var(--option-span-height) * 0.7);
+  --light-grey-text: rgb(110, 110, 110);
+  --loading-square-width: clamp(1.5vw, 8px, 3vw);
 }
 
 @font-face {
@@ -37,6 +39,11 @@ body {
 
 .centre-children {
   align-items: center;
+}
+
+.centre-children-vertically {
+  justify-items: center;
+  justify-content: center;
 }
 
 input {
@@ -173,4 +180,85 @@ input:disabled {
 img {
   height: clamp(1em, 100px, 5em);
   margin: 1em;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pulse-animation {
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 2s;
+  animation-timing-function: cubic-bezier(1, 0, 0.14, 1.01);
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.loading-text {
+  width: 60vw;
+  text-align: center;
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    bottom: -100vh;
+  }
+  to {
+    bottom: 0;
+  }
+}
+
+.loading-section {
+  position: relative;
+  animation-name: slide-in-from-bottom;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.17, 0.67, 0.39, 0.99);
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+}
+
+@keyframes jump {
+  from {
+    bottom: 0px;
+  }
+  to {
+    bottom: 40px;
+  }
+}
+
+.circle {
+  background-color: rgb(255, 152, 152);
+  width: var(--loading-square-width);
+  height: var(--loading-square-width);
+  margin: var(--loading-square-width);
+  position: relative;
+  animation-name: jump;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.circle:nth-of-type(2) {
+  background-color: rgb(255, 183, 125);
+  animation-delay: 0.2s;
+}
+
+.circle:nth-of-type(3) {
+  background-color: rgb(134, 191, 255);
+  animation-delay: 0.4s;
+}
+
+.loading-squares-container {
+  position: relative;
+  margin: 40px;
 }
