@@ -9,15 +9,16 @@ export default function VoteInPoll(): JSX.Element {
   const [lastOptionChanged, setLastOptionChanged] = useState<number>();
 
   const { pollId } = useParams();
-  useEffect(() => {getPollData()
-  },[]);
+  useEffect(() => {
+    function getPollData() {
+      getData<PollProp>(
+        `${apiBaseUrl}polls/${pollId}/n`
+      ).then(res => setPollData(res as PollProp))
+      .catch((e) => console.log(e));
+    }  
+    getPollData()
+  }, [pollId]);
 
-  async function getPollData(){
-    const pollData = await getData<PollProp>(`${apiBaseUrl}polls/${pollId}/n`).catch((e) => console.log(e));
-    if(pollData){
-      setPollData((pollData as PollProp));
-    }
-  }
 
 
   function onVoteButtonClick(index: number) {
