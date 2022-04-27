@@ -1,26 +1,24 @@
 import { useEffect, useState } from "react";
 import { PollProp } from "../utils/interfaces";
-import { patchData } from "../utils/requests";
+import { patchData, getData } from "../utils/requests";
 import { apiBaseUrl } from "../utils/global_vars";
+import { useParams } from "react-router-dom";
 
 export default function VoteInPoll(): JSX.Element {
   const [pollData, setPollData] = useState<PollProp>();
   const [lastOptionChanged, setLastOptionChanged] = useState<number>();
-  const windowHref: string = window.location.href;
 
-  useEffect(() => {
-    const pollPathRegexArray: RegExpMatchArray[] = Array.from(
-      windowHref.matchAll(RegExp("[^#]*$", "g"))
-    );
-    const pollId: RegExpMatchArray = pollPathRegexArray[0];
-    console.log(`${apiBaseUrl}polls/${pollId.toString()}`);
-    fetch(`${apiBaseUrl}polls/${pollId.toString()}`)
-      .then((res) => res.json())
-      .then((data) => {
-        data as PollProp;
-        setPollData(data);
-      });
-  }, [windowHref]);
+  const { pollId } = useParams();
+  useEffect(() => {getPollData()
+  },[]);
+
+  async function getPollData(){
+    const pollData = await getData<PollProp>(`${apiBaseUrl}polls/${pollId}/n`).catch((e) => console.log(e));
+    if(pollData){
+      setPollData((pollData as PollProp));
+    }
+  }
+
 
   function onVoteButtonClick(index: number) {
     if (pollData) {
