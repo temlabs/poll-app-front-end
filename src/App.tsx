@@ -21,7 +21,7 @@ function App(): JSX.Element {
       <Routes>
         <Route path="/" element={<CreatePoll />} />
         <Route path="/created" element={<PollCreated />} />
-        <Route path="/polls" element={<VoteInPoll />} />
+        <Route path="/polls/:pollId" element={<VoteInPoll />} />
         <Route path="*" element={<h1>ERROR</h1>} />
       </Routes>
     </Router>
