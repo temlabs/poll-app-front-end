@@ -111,11 +111,6 @@ export default function OptionsController(): JSX.Element {
   }
 
   async function submitPoll() {
-    window.history.pushState(
-      [questionText, JSON.parse(JSON.stringify(options)), loading],
-      "",
-      "http://localhost:3000/"
-    );
     setLoadingStatus(true);
 
     const optionsArray: OptionProps[] = options.filter(
