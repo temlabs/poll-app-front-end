@@ -17,6 +17,7 @@ export interface OptionProps {
 export interface pollUrlProps {
   voteUrl: string;
   masterUrl: string;
+  questionText: string;
 }
 
 export interface PollProp {

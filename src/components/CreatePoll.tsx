@@ -1,4 +1,5 @@
 import { createRef, RefObject, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { postData } from "../utils/requests";
 import {
   OptionProps,
@@ -7,7 +8,6 @@ import {
   PollProp,
 } from "../utils/interfaces";
 import { apiBaseUrl } from "../utils/global_vars";
-import PollCreated from "./PollCreated";
 import PollConfig from "./PollConfig";
 import LoadingPoll from "./LoadingPoll";
 
@@ -35,41 +35,14 @@ export default function OptionsController(): JSX.Element {
     },
   ];
 
-  // let startingQuestion = "";
-  // let startingLoadingStatus;
-
-
-
-  // if(window.history.state){
-  //   startingQuestion = window.history.state[0];
-  //   console.log(startingQuestion);
-  //   //setOptions(window.history.state[1]);
-  //   startingLoadingStatus = false;
-  // }
-
-
-
   const [options, setOptions] = useState<OptionProps[]>(initialOptions);
   const [questionText, setQuestionText] = useState("");
-  const [pollUrls, setPollUrls] = useState<pollUrlProps>();
   const [lastKeyPress, setLastKeyPress] = useState("");
   const [loading, setLoadingStatus] = useState(false);
-  const [pageState, setPageState] = useState();
-
-
+  const navigate = useNavigate();
 
   const abortController = new AbortController();
   const signal = abortController.signal;
-
-  window.addEventListener('popstate',(ev)=> {
-    if(window.history.state){
-      abortController.abort();
-      setOptions(window.history.state[1] as OptionProps[]);
-      setLoadingStatus(window.history.state[2]);
-      
-      setQuestionText(window.history.state[0]);
-    }
-  })
 
   function deleteOption(optionObject: OptionProps) {
     const newOptions = [...options];
@@ -138,10 +111,13 @@ export default function OptionsController(): JSX.Element {
   }
 
   async function submitPoll() {
-    window.history.pushState([questionText, JSON.parse(JSON.stringify(options)), loading],'','http://localhost:3000/');
+    window.history.pushState(
+      [questionText, JSON.parse(JSON.stringify(options)), loading],
+      "",
+      "http://localhost:3000/"
+    );
     setLoadingStatus(true);
-    
-    
+
     const optionsArray: OptionProps[] = options.filter(
       (o) => o.text.length > 0
     );
@@ -159,40 +135,34 @@ export default function OptionsController(): JSX.Element {
       `${apiBaseUrl}poll`,
       requestBody,
       signal
-    ).catch(e => console.log(e))
+    ).catch((e) => console.log(e));
 
-    if(createdPoll){
+    if (createdPoll) {
       createdPoll as PollProp;
       setLoadingStatus(false);
       const urlObj: pollUrlProps = {
         voteUrl: (createdPoll as PollProp).voteUrl,
         masterUrl: (createdPoll as PollProp).masterUrl,
+        questionText: questionText,
       };
-      
-      setPollUrls(urlObj);
 
+      navigate("/created", { state: urlObj });
     }
-
-
   }
 
-  if (!pollUrls) {
-    return (
-      <>
-        {(!loading && (
-          <PollConfig
-            submitPoll={submitPoll}
-            handleQuestionInputChange={handleQuestionInputChange}
-            handleOptionInputKeyPress={handleOptionInputKeyPress}
-            deleteOption={deleteOption}
-            options={options}
-            questionText={questionText}
-            lastKeyPress={lastKeyPress}
-          />
-        )) || <LoadingPoll />}
-      </>
-    );
-  } else {
-    return <PollCreated questionText={questionText} pollUrls={pollUrls} />;
-  }
+  return (
+    <>
+      {(!loading && (
+        <PollConfig
+          submitPoll={submitPoll}
+          handleQuestionInputChange={handleQuestionInputChange}
+          handleOptionInputKeyPress={handleOptionInputKeyPress}
+          deleteOption={deleteOption}
+          options={options}
+          questionText={questionText}
+          lastKeyPress={lastKeyPress}
+        />
+      )) || <LoadingPoll />}
+    </>
+  );
 }
