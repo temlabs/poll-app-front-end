@@ -3,13 +3,13 @@ import { useLocation } from "react-router-dom";
 
 export default function PollCreated(): JSX.Element {
   let voteUrl = "";
-  //let masterUrl = "";
+  let masterUrl = "";
   let questionText = "";
 
   const pollDetails = useLocation();
   if (pollDetails.state !== null) {
     voteUrl = (pollDetails.state as pollUrlProps).voteUrl;
-    //masterUrl = (pollDetails.state as pollUrlProps).masterUrl;
+    masterUrl = (pollDetails.state as pollUrlProps).masterUrl;
     questionText = (pollDetails.state as pollUrlProps).questionText;
   }
 
@@ -27,25 +27,19 @@ export default function PollCreated(): JSX.Element {
           </div>
           <div className="poll-info flex-container-column">
             <p className="poll-label">Your poll is now live!</p>
-            {/* <p className="poll-label">The master URL is:</p>
-                <span className="flex-container-row">
-                <p className="poll-link">{pollUrls.masterUrl}</p>
-                <button
-                    onClick={() =>
-                    navigator.clipboard.writeText(pollUrls.masterUrl)
-                    }
-                    className="copy-button"
-                >
-                    Copy
-                </button>
-                <a
-                    href={pollUrls.masterUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Go!
-                </a>
-                </span> */}
+            <p className="poll-label">The master URL is:</p>
+            <span className="flex-container-row">
+              <p className="poll-link">{masterUrl}</p>
+              <button
+                onClick={() => navigator.clipboard.writeText(masterUrl)}
+                className="copy-button"
+              >
+                Copy
+              </button>
+              <a href={masterUrl} target="_blank" rel="noopener noreferrer">
+                Go!
+              </a>
+            </span>
 
             <p className="poll-label">The voting URL is:</p>
             <span className="flex-container-row">

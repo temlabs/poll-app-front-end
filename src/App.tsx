@@ -1,6 +1,7 @@
 import CreatePoll from "./components/CreatePoll";
 import VoteInPoll from "./components/VoteInPoll";
 import PollCreated from "./components/PollCreated";
+import ViewPoll from "./components/ViewPoll";
 import "./styles/main-style.css";
 import logo from "./images/p-poll-head.png";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -22,6 +23,7 @@ function App(): JSX.Element {
         <Route path="/" element={<CreatePoll />} />
         <Route path="/created" element={<PollCreated />} />
         <Route path="/polls/:pollId" element={<VoteInPoll />} />
+        <Route path="/master/:pollId/:masterKey" element={<ViewPoll />} />
         <Route path="*" element={<h1>ERROR</h1>} />
       </Routes>
     </Router>
