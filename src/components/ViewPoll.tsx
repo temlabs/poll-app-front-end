@@ -10,29 +10,49 @@ export default function ViewPoll(): JSX.Element {
   const { masterKey, pollId } = useParams();
 
   useEffect(() => {
-    getData(`${apiBaseUrl}polls/${pollId}/${masterKey}`).then((res) =>
-      setPollDetails(res as PollProp)
-    );
+    const setUp = async () => {
+      await getData(`${apiBaseUrl}polls/${pollId}/${masterKey}`)
+        .then((res) => setPollDetails(res as PollProp))
+        .then(() => {
+          const socket = io.io(`${apiBaseUrl}?masterKey=${masterKey}`);
+          socket.once("connect", () => console.log("hey we're connected!"));
 
-    const socket = io.io(`${apiBaseUrl}?masterKey=${masterKey}`);
-    socket.once("connect", () => console.log("hey we're connected!"));
+          socket.on("message", (msg) => setPollDetails(msg as PollProp));
+        })
+        .catch((e) => console.log(e));
+    };
 
-    socket.on("message", (msg) => setPollDetails(msg as PollProp));
+    setUp();
   }, [masterKey, pollId]);
 
   return (
     <>
-      {pollDetails?.options
-        .sort((a, b) => b.votes - a.votes)
-        .map((o) => {
-          return (
-            <span key={o.optionNumber}>
-              <p>
-                {o.option}: {o.votes}
-              </p>
-            </span>
-          );
-        })}
+      <div className="viewpoll-div">
+        <a
+          className="polldetail-text"
+          href={pollDetails?.voteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Vote link!
+        </a>
+
+        {pollDetails?.options
+          .sort((a, b) => b.votes - a.votes)
+          .map((o, i) => {
+            return (
+              <span key={o.optionNumber} className="viewpoll-span">
+                <p>{i + 1}.</p>
+                <p>{o.option}</p>
+                <p className="vote-text">{o.votes} votes</p>
+              </span>
+            );
+          })}
+
+        <span className="close-poll">
+          <p>Close Poll</p>
+        </span>
+      </div>
     </>
   );
 }
