@@ -71,6 +71,9 @@ export default function PollSetup(props: PollSetupProps): JSX.Element {
             </span>
           ))}
         </div>
+        <p className="instruction-label">
+          A 'No preference' option will automatically be added
+        </p>
         <button onClick={props.submitPoll} className="button-confirm">
           Open Poll!
         </button>
