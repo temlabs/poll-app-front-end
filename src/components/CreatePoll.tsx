@@ -116,6 +116,16 @@ export default function OptionsController(): JSX.Element {
     const optionsArray: OptionProps[] = options.filter(
       (o) => o.text.length > 0
     );
+
+    const noPrefOption: OptionProps = {
+      onKeyPressFunction: handleOptionInputKeyPress,
+      onDeleteButtonClickFunction: deleteOption,
+      active: false,
+      id: optionsArray.length,
+      text: "No preference",
+      focusRef: inputRef,
+    };
+    optionsArray.push(noPrefOption);
     const optionsArrayData: OptionData[] = optionsArray.map((o, i) => ({
       option: o.text,
       votes: 0,

@@ -3,9 +3,18 @@ import { PollProp } from "../utils/interfaces";
 import { patchData, getData } from "../utils/requests";
 import { apiBaseUrl } from "../utils/global_vars";
 import { useParams } from "react-router-dom";
+import PollResults from "./PollResults";
 
 export default function VoteInPoll(): JSX.Element {
-  const [pollData, setPollData] = useState<PollProp>();
+  const [pollData, setPollData] = useState<PollProp>({
+    question: "",
+    options: [],
+    openTime: "",
+    closeTime: "",
+    id: "",
+    voteUrl: "",
+    masterUrl: "",
+  });
   const [lastOptionChanged, setLastOptionChanged] = useState<number>();
 
   const { pollId } = useParams();
@@ -52,23 +61,24 @@ export default function VoteInPoll(): JSX.Element {
     <>
       <h1 className="vote-question">{pollData?.question}</h1>
       <section className="flex-container-column centre-children">
-        {pollData?.options.map((o, i) => {
-          return (
-            <span className="flex-container-row" key={i}>
-              <p className="vote-option">{o.option}</p>
-              <button
-                onClick={() => onVoteButtonClick(i)}
-                className={
-                  lastOptionChanged === i
-                    ? "vote-button green-background"
-                    : "vote-button"
-                }
-              >
-                +1
-              </button>
-            </span>
-          );
-        })}
+        {(pollData.closeTime === null &&
+          pollData.options.map((o, i) => {
+            return (
+              <span className="flex-container-row" key={i}>
+                <p className="vote-option">{o.option}</p>
+                <button
+                  onClick={() => onVoteButtonClick(i)}
+                  className={
+                    lastOptionChanged === i
+                      ? "vote-button green-background"
+                      : "vote-button"
+                  }
+                >
+                  +1
+                </button>
+              </span>
+            );
+          })) || <PollResults {...pollData} />}
       </section>
     </>
   );
