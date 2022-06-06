@@ -11,7 +11,7 @@ export default function VoteInPoll(): JSX.Element {
   const { pollId } = useParams();
   useEffect(() => {
     function getPollData() {
-      getData<PollProp>(`${apiBaseUrl}polls/${pollId}/n`)
+      getData<PollProp>(`${apiBaseUrl}polls/${pollId}`)
         .then((res) => setPollData(res as PollProp))
         .catch((e) => console.log(e));
     }
